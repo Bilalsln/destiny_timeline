@@ -1,14 +1,36 @@
-const mysql = require("mysql2");
+const { Sequelize } = require("sequelize");
 const config = require("../config");
 
-let connection = mysql.createConnection(config.db);
 
-connection.connect((err) => {
-  if (err) {
-    console.log("MySQL bağlantı hatası:", err.message);
-    return;
+const sequelize = new Sequelize(
+  config.db.database,
+  config.db.user,
+  config.db.password,
+  {
+    host: config.db.host,
+    dialect: "mysql",
+    logging: false
   }
-  console.log("MySQL bağlantısı başarılı");
-});
+);
 
-module.exports = connection.promise();
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("Sequelize bağlantısı başarılı");
+  } catch (err) {
+    console.log("Sequelize bağlantı hatası:", err.message);
+  }
+})();
+
+
+async function execute(sql, params = []) {
+  const [rows, meta] = await sequelize.query(sql, {
+    replacements: params
+  });
+  return [rows, meta];
+}
+
+module.exports = {
+  sequelize,
+  execute
+};

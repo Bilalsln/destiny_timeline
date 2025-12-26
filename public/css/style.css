@@ -8,18 +8,35 @@
   --accent:#6ea8fe;
 }
 
+/* BACKGROUND */
 .bg-app{
   background: radial-gradient(1200px 600px at 20% 10%, rgba(110,168,254,0.18), transparent 60%),
               radial-gradient(900px 500px at 80% 20%, rgba(255,255,255,0.06), transparent 60%),
               linear-gradient(180deg, var(--bg), var(--bg2));
 }
 
+/* NAVBAR (z-index fix burada) */
 .nav-app{
   background: rgba(0,0,0,0.35);
   border-bottom: 1px solid rgba(255,255,255,0.08);
   backdrop-filter: blur(10px);
+
+  /* ✅ dropdown’un diğer divlerin üstünde kalması için */
+  position: relative;
+  z-index: 2000;
 }
 
+/* ✅ Bootstrap dropdown menü her zaman üstte olsun */
+.dropdown-menu{
+  z-index: 3000;
+}
+
+/* ✅ Senin özel dropdown panel’in daha da üstte */
+.dropdown-tools-panel{
+  z-index: 4000;
+}
+
+/* BRAND */
 .brand{
   letter-spacing: 0.18em;
   font-weight: 700;
@@ -27,6 +44,7 @@
 }
 .brand-dot{ color: var(--accent); }
 
+/* NAV LINKS */
 .nav-link-app{
   color: rgba(244,246,251,0.78) !important;
 }
@@ -34,12 +52,12 @@
   color: var(--white) !important;
 }
 
-/* Sık kullanılan açık-gri metin */
+/* MUTED TEXT */
 .text-muted2{
   color: var(--muted) !important;
 }
 
-
+/* BUTTONS */
 .btn-soft{
   background: rgba(110,168,254,0.14);
   border: 1px solid rgba(110,168,254,0.35);
@@ -50,7 +68,7 @@
   border-color: rgba(110,168,254,0.55);
 }
 
-
+/* HERO */
 .hero{
   padding: 64px 0 40px;
 }
@@ -113,7 +131,7 @@
   font-size: 0.85rem;
 }
 
-
+/* CARDS */
 .card-app{
   background: rgba(11,18,36,0.75);
   border: 1px solid rgba(255,255,255,0.08);
@@ -127,7 +145,7 @@
   background: rgba(11,18,36,0.90);
 }
 
-
+/* kart içindeki her şeyi beyaz yap */
 .card-app,
 .card-app *{
   color: var(--white);
@@ -144,17 +162,16 @@
   background: rgba(0,0,0,0.18);
 }
 
-
 .card-app .text-muted2{
   color: rgba(244,246,251,0.72) !important;
 }
-
 
 .divider{
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
 }
 
+/* CHIPS */
 .chip{
   display:inline-block;
   padding: 7px 10px;
@@ -165,7 +182,7 @@
   font-size: 0.85rem;
 }
 
-
+/* FORMS */
 .form-label{
   color: var(--white) !important;
 }
@@ -187,3 +204,66 @@
   color: rgba(255, 255, 255, 0.55);
 }
 
+/* TOOLS BUTTON */
+.btn-tools{
+  background: rgba(0,0,0,0.10);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: var(--white) !important;
+  border-radius: 999px;
+  padding: 6px 12px;
+}
+.btn-tools:hover{
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.40);
+}
+
+/* YouTube tarzı dropdown panel */
+.dropdown-tools-panel{
+  width: 320px;
+  padding: 10px;
+  background: rgba(25,25,25,0.92);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 16px;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.55);
+  backdrop-filter: blur(12px);
+}
+
+.tools-panel-header{
+  padding: 10px 10px 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 6px;
+}
+.tools-panel-title{
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.tools-panel-sub{
+  color: rgba(255,255,255,0.60);
+  font-size: 0.85rem;
+  margin-top: 2px;
+}
+
+/* Menü item'ları */
+.tools-item{
+  padding: 10px 10px;
+  border-radius: 12px;
+  color: rgba(255,255,255,0.88);
+}
+.tools-item:hover{
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+}
+.tools-item-title{
+  display:block;
+  font-weight: 600;
+}
+.tools-item-desc{
+  display:block;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.62);
+  margin-top: 2px;
+}
+
+.dropdown-tools-panel .dropdown-divider{
+  border-top: 1px solid rgba(255,255,255,0.10);
+}

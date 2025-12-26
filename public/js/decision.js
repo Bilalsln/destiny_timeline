@@ -1,8 +1,7 @@
-const aEl = document.getElementById("a");
-const bEl = document.getElementById("b");
-const decideBtn = document.getElementById("decideBtn");
-const outEl = document.getElementById("out");
-const historyEl = document.getElementById("history");
+const form = document.getElementById("decisionForm");
+const decisionTextEl = document.getElementById("decisionText");
+const outEl = document.getElementById("decisionAnswer");
+const historyEl = document.getElementById("decisionList");
 const refreshBtn = document.getElementById("refreshBtn");
 
 function escapeHtml(s) {
@@ -14,22 +13,11 @@ function escapeHtml(s) {
     .replaceAll("'", "&#039;");
 }
 
-async function loadHistory() {
-  historyEl.textContent = "Yükleniyor...";
+let allDecisionItems = [];
+let showingAllDecision = false;
 
-  const res = await fetch("/api/decision");
-  if (!res.ok) {
-    historyEl.textContent = "Kayıtlar alınamadı.";
-    return;
-  }
-
-  const out = await res.json();
-  if (!out.items || out.items.length === 0) {
-    historyEl.textContent = "Henüz kayıt yok.";
-    return;
-  }
-
-  historyEl.innerHTML = out.items
+function renderDecisionItems(items) {
+  return items
     .map((x) => {
       const dt = new Date(x.createdAt).toLocaleString("tr-TR");
       return `
@@ -57,12 +45,53 @@ async function loadHistory() {
     .join("");
 }
 
-async function decide() {
-  const optionA = aEl.value.trim();
-  const optionB = bEl.value.trim();
+async function loadHistory() {
+  historyEl.textContent = "Yükleniyor...";
 
-  if (optionA.length < 2 || optionB.length < 2) {
-    outEl.textContent = "Lütfen iki seçeneği de yaz.";
+  const res = await fetch("/api/decision");
+  if (!res.ok) {
+    historyEl.textContent = "Kayıtlar alınamadı.";
+    return;
+  }
+
+  const out = await res.json();
+  if (!out.items || out.items.length === 0) {
+    historyEl.textContent = "Henüz kayıt yok.";
+    return;
+  }
+
+  allDecisionItems = out.items;
+  showingAllDecision = false;
+  displayDecisionHistory();
+}
+
+function displayDecisionHistory() {
+  const itemsToShow = showingAllDecision ? allDecisionItems : allDecisionItems.slice(0, 2);
+  let html = renderDecisionItems(itemsToShow);
+  
+  if (allDecisionItems.length > 2) {
+    if (showingAllDecision) {
+      html += `<button class="btn btn-sm btn-outline-light mt-3 w-100" onclick="toggleDecisionView()">Gizle</button>`;
+    } else {
+      html += `<button class="btn btn-sm btn-outline-light mt-3 w-100" onclick="toggleDecisionView()">Tümünü Gör (${allDecisionItems.length})</button>`;
+    }
+  }
+  
+  historyEl.innerHTML = html;
+}
+
+window.toggleDecisionView = function() {
+  showingAllDecision = !showingAllDecision;
+  displayDecisionHistory();
+}
+
+async function decide(e) {
+  e?.preventDefault();
+  const optionA = decisionTextEl.value.trim();
+  const optionB = "Diğer seçenek veya durum yok"; // Tek alanlı form için placeholder
+
+  if (optionA.length < 2) {
+    outEl.textContent = "Lütfen kararını yaz.";
     return;
   }
 
@@ -81,8 +110,7 @@ async function decide() {
   }
 
   outEl.textContent = out.aiResult || "Öneri alınamadı.";
-  aEl.value = "";
-  bEl.value = "";
+  decisionTextEl.value = "";
   await loadHistory();
 }
 
@@ -98,7 +126,7 @@ window.deleteDecision = async function (id) {
   await loadHistory();
 };
 
-decideBtn.addEventListener("click", decide);
+form.addEventListener("submit", decide);
 refreshBtn.addEventListener("click", loadHistory);
 
 loadHistory();

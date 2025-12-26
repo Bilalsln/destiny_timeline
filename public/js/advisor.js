@@ -1,7 +1,7 @@
-const askBtn = document.getElementById("askBtn");
-const qEl = document.getElementById("q");
-const ansEl = document.getElementById("ans");
-const historyEl = document.getElementById("history");
+const form = document.getElementById("advisorForm");
+const qEl = document.getElementById("question");
+const ansEl = document.getElementById("answerBox");
+const historyEl = document.getElementById("recordsBox");
 const refreshBtn = document.getElementById("refreshBtn");
 
 function escapeHtml(s) {
@@ -13,22 +13,11 @@ function escapeHtml(s) {
     .replaceAll("'", "&#039;");
 }
 
-async function loadHistory() {
-  historyEl.textContent = "Yükleniyor...";
+let allAdvisorItems = [];
+let showingAllAdvisor = false;
 
-  const res = await fetch("/api/advisor");
-  if (!res.ok) {
-    historyEl.textContent = "Kayıtlar alınamadı.";
-    return;
-  }
-
-  const out = await res.json();
-  if (!out.items || out.items.length === 0) {
-    historyEl.textContent = "Henüz kayıt yok.";
-    return;
-  }
-
-  historyEl.innerHTML = out.items
+function renderAdvisorItems(items) {
+  return items
     .map((x) => {
       const dt = new Date(x.createdAt).toLocaleString("tr-TR");
       return `
@@ -53,7 +42,48 @@ async function loadHistory() {
     .join("");
 }
 
-async function askAdvisor() {
+async function loadHistory() {
+  historyEl.textContent = "Yükleniyor...";
+
+  const res = await fetch("/api/advisor");
+  if (!res.ok) {
+    historyEl.textContent = "Kayıtlar alınamadı.";
+    return;
+  }
+
+  const out = await res.json();
+  if (!out.items || out.items.length === 0) {
+    historyEl.textContent = "Henüz kayıt yok.";
+    return;
+  }
+
+  allAdvisorItems = out.items;
+  showingAllAdvisor = false;
+  displayAdvisorHistory();
+}
+
+function displayAdvisorHistory() {
+  const itemsToShow = showingAllAdvisor ? allAdvisorItems : allAdvisorItems.slice(0, 2);
+  let html = renderAdvisorItems(itemsToShow);
+  
+  if (allAdvisorItems.length > 2) {
+    if (showingAllAdvisor) {
+      html += `<button class="btn btn-sm btn-outline-light mt-3 w-100" onclick="toggleAdvisorView()">Gizle</button>`;
+    } else {
+      html += `<button class="btn btn-sm btn-outline-light mt-3 w-100" onclick="toggleAdvisorView()">Tümünü Gör (${allAdvisorItems.length})</button>`;
+    }
+  }
+  
+  historyEl.innerHTML = html;
+}
+
+window.toggleAdvisorView = function() {
+  showingAllAdvisor = !showingAllAdvisor;
+  displayAdvisorHistory();
+}
+
+async function askAdvisor(e) {
+  e?.preventDefault();
   const question = qEl.value.trim();
   if (question.length < 5) {
     ansEl.textContent = "Soru çok kısa.";
@@ -93,7 +123,7 @@ window.deleteAdvisor = async function (id) {
   await loadHistory();
 };
 
-askBtn.addEventListener("click", askAdvisor);
+form.addEventListener("submit", askAdvisor);
 refreshBtn.addEventListener("click", loadHistory);
 
 loadHistory();

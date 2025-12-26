@@ -1,56 +1,78 @@
 const form = document.getElementById("diaryForm");
-const msg = document.getElementById("msg");
-const aiBox = document.getElementById("aiBox");
-const history = document.getElementById("history");
+const aiBox = document.getElementById("aiAnswer");
+const historyEl = document.getElementById("diaryList");
 const refreshBtn = document.getElementById("refreshBtn");
 
-function show(type, text) {
-  msg.innerHTML = `<div class="alert alert-${type}">${text}</div>`;
+let allDiaryItems = [];
+let showingAllDiary = false;
+
+function renderDiaryItems(items) {
+  return items
+    .map((x) => {
+      const dt = new Date(x.createdAt).toLocaleString("tr-TR");
+      return `
+        <div class="mb-3 p-3"
+          style="border:1px solid rgba(255,255,255,0.10);
+                 border-radius:14px;
+                 background:rgba(0,0,0,0.18)">
+
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="text-muted2 small">${dt}</div>
+            <button class="btn btn-sm btn-outline-danger"
+              onclick="deleteItem(${x.id})">
+              Sil
+            </button>
+          </div>
+
+          <div class="fw-semibold mt-2">Günlük</div>
+          <div class="text-muted2">${escapeHtml(x.diaryText)}</div>
+
+          <div class="fw-semibold mt-2">Yapay Zeka Önerisi</div>
+          <div>${escapeHtml(x.aiAdvice)}</div>
+        </div>
+      `;
+    })
+    .join("");
 }
 
 async function loadHistory() {
-  history.textContent = "Yükleniyor...";
+  historyEl.textContent = "Yükleniyor...";
 
   const res = await fetch("/api/diary-ai");
   if (!res.ok) {
-    history.textContent = "Kayıtlar alınamadı.";
+    historyEl.textContent = "Kayıtlar alınamadı.";
     return;
   }
 
   const out = await res.json();
   if (!out.items || out.items.length === 0) {
-    history.textContent = "Henüz kayıt yok.";
+    historyEl.textContent = "Henüz kayıt yok.";
     return;
   }
 
-  history.innerHTML = out.items
-  .map((x) => {
-    const dt = new Date(x.createdAt).toLocaleString("tr-TR");
+  allDiaryItems = out.items;
+  showingAllDiary = false;
+  displayDiaryHistory();
+}
 
-    return `
-      <div class="mb-3 p-3"
-        style="border:1px solid rgba(255,255,255,0.10);
-               border-radius:14px;
-               background:rgba(0,0,0,0.18)">
+function displayDiaryHistory() {
+  const itemsToShow = showingAllDiary ? allDiaryItems : allDiaryItems.slice(0, 2);
+  let html = renderDiaryItems(itemsToShow);
+  
+  if (allDiaryItems.length > 2) {
+    if (showingAllDiary) {
+      html += `<button class="btn btn-sm btn-outline-light mt-3 w-100" onclick="toggleDiaryView()">Gizle</button>`;
+    } else {
+      html += `<button class="btn btn-sm btn-outline-light mt-3 w-100" onclick="toggleDiaryView()">Tümünü Gör (${allDiaryItems.length})</button>`;
+    }
+  }
+  
+  historyEl.innerHTML = html;
+}
 
-        <div class="d-flex justify-content-between align-items-center">
-          <div class="text-muted2 small">${dt}</div>
-          <button class="btn btn-sm btn-outline-danger"
-            onclick="deleteItem(${x.id})">
-            Sil
-          </button>
-        </div>
-
-        <div class="fw-semibold mt-2">Günlük</div>
-        <div class="text-muted2">${escapeHtml(x.diaryText)}</div>
-
-        <div class="fw-semibold mt-2">Yapay Zeka Önerisi</div>
-        <div>${escapeHtml(x.aiAdvice)}</div>
-      </div>
-    `;
-  })
-  .join("");
-
+window.toggleDiaryView = function() {
+  showingAllDiary = !showingAllDiary;
+  displayDiaryHistory();
 }
 
 function escapeHtml(s) {
@@ -67,11 +89,11 @@ form.addEventListener("submit", async (e) => {
 
   const diaryText = form.diaryText.value.trim();
   if (diaryText.length < 10) {
-    show("warning", "Günlük metni çok kısa.");
+    aiBox.textContent = "Günlük metni çok kısa.";
     return;
   }
 
-  show("info", "Yapay Zeka önerisi oluşturuluyor...");
+  aiBox.textContent = "Yapay Zeka önerisi oluşturuluyor...";
 
   const res = await fetch("/api/diary-ai", {
     method: "POST",
@@ -82,11 +104,10 @@ form.addEventListener("submit", async (e) => {
   const out = await res.json();
 
   if (!res.ok) {
-    show("danger", out.error || "İşlem başarısız");
+    aiBox.textContent = out.error || "İşlem başarısız";
     return;
   }
 
-  show("success", "Kaydedildi ✅");
   aiBox.textContent = out.aiAdvice || "Öneri alınamadı.";
   form.reset();
   await loadHistory();

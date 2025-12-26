@@ -1,0 +1,42 @@
+<%- include("partials/head", { title: "Ruh Hali - Destiny Timeline" }) %>
+<%- include("partials/nav") %>
+
+<main class="container py-5">
+  <div class="row g-3">
+    <div class="col-lg-6">
+      <div class="card card-app">
+        <div class="card-body">
+          <div class="card-tag">RUH HALİ</div>
+          <h1 class="h4 mt-3">Ruh Halini Analiz Et</h1>
+          <p class="text-muted2">
+            10 soruyu cevapla → Yapay zeka ruh halini anlasın ve tavsiyeler versin
+          </p>
+
+          <div id="questionsArea"></div>
+
+          <button id="analyzeBtn" class="btn btn-sm btn-outline-light mt-3">
+            Analiz Et ve Kaydet
+          </button>
+
+          <div class="divider my-4"></div>
+
+          <h2 class="h5">Sonuç</h2>
+          <div id="resultBox" class="text-muted2"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card card-app">
+        <div class="card-body">
+          <div class="card-tag">GEÇMİŞ</div>
+          <h2 class="h5 mt-3">Ruh Hali Geçmişi</h2>
+          <div id="historyArea" class="mt-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="/static/js/tools_mood.js"></script>
+<%- include("partials/footer") %>

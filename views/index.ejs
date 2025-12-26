@@ -1,0 +1,87 @@
+<%- include("partials/head", { title: "Destiny Timeline" }) %>
+<%- include("partials/nav") %>
+
+<header class="hero">
+  <div class="container">
+    <div class="hero-box">
+
+      <div class="hero-kicker">KİŞİSEL DANIŞMAN • ÖNERİ • GÜNLÜK</div>
+
+      <h1 class="hero-title">
+        Destiny Timeline
+      </h1>
+
+      <p class="hero-sub">
+        Günlük kayıtlarını tut, kararlarını danış.
+        İstersen Yapay Zeka ile kişisel öneriler al.
+      </p>
+
+      <div class="hero-stats mt-4">
+        <div class="stat">
+          <div class="stat-num">Danışman</div>
+          <div class="stat-txt">Kararlarını Yapay Zekaya danış</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">GÜNLÜK</div>
+          <div class="stat-txt">Online Günlüğün</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">Karar Yardımcısı</div>
+          <div class="stat-txt">Yapay Zeka İle Arada Kaldıkların Hakkında Öneri Al</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+<main class="container py-5">
+
+  <div class="row g-3">
+
+    <div class="col-lg-4">
+      <div class="card card-app h-100">
+        <div class="card-body">
+          <div class="card-tag">DANIŞMAN</div>
+          <h2 class="h5 mt-2">Benden Fikir İste</h2>
+          <p class="text-muted2 mb-3">
+            Gün içinde takıldığın ya da merak ettiğin konularda danışmanın burada
+          </p>
+          <a class="btn btn-sm btn-outline-light" href="/diary">GİT</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card card-app h-100">
+        <div class="card-body">
+          <div class="card-tag">GÜNLÜK</div>
+          <h2 class="h5 mt-2">Senin Kişisel Günlüğün</h2>
+          <p class="text-muted2 mb-3">
+            Günlüğünü yaz, yapay zeka öneri üretsin ve kayıtlı kalsın
+          </p>
+          <a class="btn btn-sm btn-outline-light" href="/diary-ai">GİT</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card card-app h-100">
+        <div class="card-body">
+          <div class="card-tag">KARAR YARDIMCISI</div>
+          <h2 class="h5 mt-2">Karar Ver</h2>
+          <p class="text-muted2 mb-3">
+            Arada kaldıkların hakkında yardım ve öneriler
+          </p>
+          <a class="btn btn-sm btn-outline-light" href="/ai">GİT</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider my-5"></div>
+
+</main>
+
+<%- include("partials/footer") %>
