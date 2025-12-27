@@ -41,6 +41,9 @@ app.use("/api", decisionAiApiRoutes);
 const moodApiRoutes = require("./routes/mood_api");
 app.use("/api", moodApiRoutes);
 
+const musicAiApiRoutes = require("./routes/music_ai_api");
+app.use("/api", musicAiApiRoutes);
+
 app.get("/login", (req, res) => {
   res.render("login");
 });
@@ -75,6 +78,10 @@ app.get("/tools/mood", requireLogin, (req, res) => {
 
 app.get("/tools/budget-travel", requireLogin, (req, res) => {
   res.render("tools_travel");
+});
+
+app.get("/tools/music", requireLogin, (req, res) => {
+  res.render("tools_music");
 });
 
 app.use((req, res) => {
