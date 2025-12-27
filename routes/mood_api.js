@@ -49,7 +49,6 @@ Kurallar:
 - mood_label: 1-3 kelimelik kısa etiket (örn: "yorgun ve gergin")
 - message: 6-10 cümlelik arkadaşça sohbet metni (kullanıcıya "sen" diye hitap et)
 - mini_task: tek cümle, yapılabilir mini görev
-- music_suggestion: 1 satır, daha spesifik öneri (örn: "lofi study + idealism (playlist)" gibi)
 
 Sorular ve cevaplar:
 ${QUESTIONS.map((q, i) => `S${i + 1}: ${q}\nC${i + 1}: ${answers[i]}`).join("\n\n")}
@@ -81,10 +80,9 @@ ${QUESTIONS.map((q, i) => `S${i + 1}: ${q}\nC${i + 1}: ${answers[i]}`).join("\n\
                 mood_score: { type: "number" },
                 mood_label: { type: "string" },
                 message: { type: "string" },
-                mini_task: { type: "string" },
-                music_suggestion: { type: "string" }
+                mini_task: { type: "string" }
               },
-              required: ["mood_score", "mood_label", "message", "mini_task", "music_suggestion"]
+              required: ["mood_score", "mood_label", "message", "mini_task"]
             }
           }
         }
@@ -113,8 +111,6 @@ ${QUESTIONS.map((q, i) => `S${i + 1}: ${q}\nC${i + 1}: ${answers[i]}`).join("\n\
     const moodLabel = result.mood_label || "Bilinmiyor";
     const message = result.message || "";
     const miniTask = result.mini_task || "";
-    const music = result.music_suggestion || "";
-
 
     await db.execute(
       `INSERT INTO mood_history (user_id, answers_json, mood_label, advice, mini_task, music_suggestion)
@@ -125,7 +121,7 @@ ${QUESTIONS.map((q, i) => `S${i + 1}: ${q}\nC${i + 1}: ${answers[i]}`).join("\n\
         `${moodScore}/100 - ${moodLabel}`,
         message,
         miniTask,
-        music
+        ""
       ]
     );
 
@@ -140,7 +136,7 @@ router.get("/mood/history", requireLoginApi, async (req, res) => {
   try {
     const userId = req.session.user.id;
     const [rows] = await db.execute(
-      "SELECT id, mood_label, advice, mini_task, music_suggestion, created_at FROM mood_history WHERE user_id=? ORDER BY id DESC",
+      "SELECT id, mood_label, advice, mini_task, created_at FROM mood_history WHERE user_id=? ORDER BY id DESC",
       [userId]
     );
     res.json({ rows });

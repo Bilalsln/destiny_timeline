@@ -110,7 +110,6 @@ async function askAdvisor(e) {
   await loadHistory();
 }
 
-
 window.deleteAdvisor = async function (id) {
   if (!confirm("Bu kaydı silmek istiyor musun?")) return;
 

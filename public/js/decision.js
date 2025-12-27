@@ -88,7 +88,7 @@ window.toggleDecisionView = function() {
 async function decide(e) {
   e?.preventDefault();
   const optionA = decisionTextEl.value.trim();
-  const optionB = "Diğer seçenek veya durum yok"; // Tek alanlı form için placeholder
+  const optionB = "Diğer seçenek veya durum yok";
 
   if (optionA.length < 2) {
     outEl.textContent = "Lütfen kararını yaz.";

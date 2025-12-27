@@ -7,7 +7,6 @@ function requireLoginApi(req, res, next) {
   return res.status(401).json({ error: "Login gerekli" });
 }
 
-
 router.get("/decision", requireLoginApi, async (req, res) => {
   try {
     const userId = req.session.user.id;
@@ -23,7 +22,6 @@ router.get("/decision", requireLoginApi, async (req, res) => {
     res.status(500).json({ error: "Sunucu hatası" });
   }
 });
-
 
 router.post("/decision", requireLoginApi, async (req, res) => {
   const optionA = (req.body.optionA || "").trim();
@@ -49,7 +47,6 @@ router.post("/decision", requireLoginApi, async (req, res) => {
     res.status(500).json({ error: "AI/Sunucu hatası" });
   }
 });
-
 
 router.delete("/decision/:id", requireLoginApi, async (req, res) => {
   const id = parseInt(req.params.id, 10);

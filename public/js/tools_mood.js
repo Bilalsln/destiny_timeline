@@ -55,7 +55,6 @@ async function analyzeAndSave() {
     <div class="mt-2"><b>Ruh Hali:</b> ${r.mood_label}</div>
     <div class="mt-2"><b>Tavsiye:</b> ${r.message}</div>
     <div class="mt-2"><b>Mini Görev:</b> ${r.mini_task}</div>
-    <div class="mt-2"><b>Müzik Önerisi:</b> ${r.music_suggestion}</div>
   `;
 
   await loadHistory();
@@ -71,7 +70,6 @@ function renderMoodItems(items) {
       <div class="mt-2"><b>${row.mood_label}</b></div>
       <div class="mt-2">${row.advice}</div>
       <div class="mt-2"><b>Mini görev:</b> ${row.mini_task}</div>
-      <div class="mt-2"><b>Müzik:</b> ${row.music_suggestion}</div>
 
       <button class="btn btn-sm btn-outline-light mt-3" onclick="deleteHistory(${row.id})">Sil</button>
     </div>

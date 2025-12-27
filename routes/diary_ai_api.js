@@ -7,7 +7,6 @@ function requireLoginApi(req, res, next) {
   return res.status(401).json({ error: "Login gerekli" });
 }
 
-
 router.get("/diary-ai", requireLoginApi, async (req, res) => {
   try {
     const userId = req.session.user.id;
@@ -24,7 +23,6 @@ router.get("/diary-ai", requireLoginApi, async (req, res) => {
   }
 });
 
-
 router.post("/diary-ai", requireLoginApi, async (req, res) => {
   const diaryText = (req.body.diaryText || "").trim();
   if (diaryText.length < 10) {
@@ -33,7 +31,6 @@ router.post("/diary-ai", requireLoginApi, async (req, res) => {
 
   try {
     const userId = req.session.user.id;
-
 
     const aiAdvice = await getAdviceFromOpenAI(diaryText);
 
@@ -49,7 +46,6 @@ router.post("/diary-ai", requireLoginApi, async (req, res) => {
   }
 });
 
-
 router.delete("/diary-ai/:id", requireLoginApi, async (req, res) => {
   const id = parseInt(req.params.id, 10);
   const userId = req.session.user.id;
@@ -59,7 +55,6 @@ router.delete("/diary-ai/:id", requireLoginApi, async (req, res) => {
   }
 
   try {
-    
     const [result] = await db.execute(
       "DELETE FROM diary_ai WHERE id=? AND userId=?",
       [id, userId]

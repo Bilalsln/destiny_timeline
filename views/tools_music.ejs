@@ -1,0 +1,83 @@
+<%- include("partials/head", { title: "AI DJ - Destiny Timeline" }) %>
+<%- include("partials/nav") %>
+
+<main class="container py-5">
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <div class="card card-app">
+        <div class="card-body">
+          <div class="card-tag">EĞLENCE</div>
+          <h1 class="h4 mt-3">AI DJ: Müzik Önerisi</h1>
+          <p class="text-muted2">
+            Ruh halini ve sevdiğin türü söyle, yapay zeka sana özel bir şarkı seçsin.
+          </p>
+
+          <div class="row g-3 mt-2">
+            <div class="col-md-4">
+              <label class="form-label text-muted2">Mood</label>
+              <select id="moodSelect" class="form-select bg-dark text-light border-secondary">
+                <option value="">Seçiniz...</option>
+                <option value="Mutlu & Enerjik">Mutlu & Enerjik</option>
+                <option value="Hüzünlü & Melankolik">Hüzünlü & Melankolik</option>
+                <option value="Odaklanmış & Çalışkan">Odaklanmış & Çalışkan</option>
+                <option value="Rahat & Chill">Rahat & Chill</option>
+                <option value="Öfkeli & Gergin">Öfkeli & Gergin</option>
+                <option value="Romantik">Romantik</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label text-muted2">Müzik Türü</label>
+              <select id="genreSelect" class="form-select bg-dark text-light border-secondary">
+                <option value="">Seçiniz...</option>
+                <option value="Pop">Pop</option>
+                <option value="Rock">Rock</option>
+                <option value="Rap / Hip-Hop">Rap / Hip-Hop</option>
+                <option value="Jazz / Blues">Jazz / Blues</option>
+                <option value="Klasik">Klasik</option>
+                <option value="Elektronik">Elektronik</option>
+                <option value="Indie / Alternatif">Indie / Alternatif</option>
+                <option value="Metal">Metal</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label text-muted2">Ruh Hali Geçmişi (Opsiyonel)</label>
+              <select id="moodHistorySelect" class="form-select bg-dark text-light border-secondary">
+                <option value="">Seçiniz...</option>
+              </select>
+            </div>
+          </div>
+
+          <button id="suggestBtn" class="btn btn-outline-light w-100 mt-4">
+            🎵 Bana Şarkı Öner
+          </button>
+
+          <div id="resultArea" class="mt-4 d-none">
+            <div class="p-3 border border-secondary rounded bg-dark">
+              <h5 class="text-white mb-2" id="suggestionTitle"></h5>
+              <p class="text-muted2 mb-0" id="suggestionReason"></p>
+              
+              <a id="youtubeLink" href="#" target="_blank" class="btn btn-outline-light btn-sm mt-3">
+                ▶ Şarkıyı Aç
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card card-app h-100">
+        <div class="card-body">
+          <div class="card-tag">GEÇMİŞ</div>
+          <h2 class="h5 mt-3">Müzik Geçmişi</h2>
+          <div id="historyArea" class="mt-3">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="/static/js/tools_music.js"></script>
+<%- include("partials/footer") %>

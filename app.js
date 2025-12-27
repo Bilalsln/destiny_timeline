@@ -44,6 +44,26 @@ app.use("/api", moodApiRoutes);
 const musicAiApiRoutes = require("./routes/music_ai_api");
 app.use("/api", musicAiApiRoutes);
 
+const db = require("./data/db");
+(async () => {
+  try {
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS music_history (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        mood VARCHAR(100),
+        genre VARCHAR(100),
+        song_name TEXT,
+        reason TEXT,
+        youtube_link TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+  } catch (err) {
+    console.log("Tablo oluşturma hatası:", err.message);
+  }
+})();
+
 app.get("/login", (req, res) => {
   res.render("login");
 });

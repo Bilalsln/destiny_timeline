@@ -128,7 +128,6 @@ async function deleteItem(id) {
   await loadHistory();
 }
 
-
 refreshBtn.addEventListener("click", loadHistory);
 
 loadHistory();
