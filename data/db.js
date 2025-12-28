@@ -4,13 +4,11 @@ require("dotenv").config();
 let sequelize;
 
 if (process.env.DATABASE_URL) {
-
   sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect: "mysql",
     logging: false,
   });
 } else {
- 
   sequelize = new Sequelize(
     process.env.DB_DATABASE || "destiny_timeline",
     process.env.DB_USER || "root",
