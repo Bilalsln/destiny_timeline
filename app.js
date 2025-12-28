@@ -26,6 +26,27 @@ function requireLogin(req, res, next) {
   return res.redirect("/login");
 }
 
+
+const sequelize = require("./data/db");
+
+
+require("./models/User");
+
+
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("✅ Database connection successful");
+
+    await sequelize.sync(); // ✅ tabloları otomatik oluşturur
+    console.log("✅ Database synced");
+
+  } catch (err) {
+    console.log("❌ DB init error:", err.message);
+  }
+})();
+
+
 const authApiRoutes = require("./routes/auth_api");
 app.use("/api", authApiRoutes);
 
@@ -50,10 +71,10 @@ app.use("/api", outfitApiRoutes);
 const travelApiRoutes = require("./routes/travel_api");
 app.use("/api", travelApiRoutes);
 
-const db = require("./data/db");
+
 (async () => {
   try {
-    await db.execute(`
+    await sequelize.query(`
       CREATE TABLE IF NOT EXISTS music_ai (
         id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT NOT NULL,
@@ -65,50 +86,24 @@ const db = require("./data/db");
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+    console.log("✅ music_ai table ensured");
   } catch (err) {
-    console.log("Tablo oluşturma hatası:", err.message);
+    console.log("❌ Tablo oluşturma hatası:", err.message);
   }
 })();
 
-app.get("/login", (req, res) => {
-  res.render("login");
-});
+app.get("/login", (req, res) => res.render("login"));
+app.get("/register", (req, res) => res.render("register"));
 
-app.get("/register", (req, res) => {
-  res.render("register");
-});
+app.get("/", requireLogin, (req, res) => res.render("index"));
+app.get("/advisor", requireLogin, (req, res) => res.render("advisor"));
+app.get("/decision", requireLogin, (req, res) => res.render("decision"));
+app.get("/diary", requireLogin, (req, res) => res.render("diary"));
 
-app.get("/", requireLogin, (req, res) => {
-  res.render("index");
-});
-
-app.get("/advisor", requireLogin, (req, res) => {
-  res.render("advisor");
-});
-
-app.get("/decision", requireLogin, (req, res) => {
-  res.render("decision");
-});
-
-app.get("/diary", requireLogin, (req, res) => {
-  res.render("diary");
-});
-
-app.get("/tools/mood", requireLogin, (req, res) => {
-  res.render("tools_mood");
-});
-
-app.get("/tools/travel", requireLogin, (req, res) => {
-  res.render("tools_travel");
-});
-
-app.get("/tools/music", requireLogin, (req, res) => {
-  res.render("tools_music");
-});
-
-app.get("/tools/outfit", requireLogin, (req, res) => {
-  res.render("tools_outfit");
-});
+app.get("/tools/mood", requireLogin, (req, res) => res.render("tools_mood"));
+app.get("/tools/travel", requireLogin, (req, res) => res.render("tools_travel"));
+app.get("/tools/music", requireLogin, (req, res) => res.render("tools_music"));
+app.get("/tools/outfit", requireLogin, (req, res) => res.render("tools_outfit"));
 
 app.use((req, res) => {
   res.status(404).send("404 - Sayfa bulunamadı");

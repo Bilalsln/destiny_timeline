@@ -46,7 +46,6 @@ router.post("/music-ai", requireLoginApi, async (req, res) => {
 });
 
 async function getMoodHistoryById(userId, historyId) {
-    const db = require("../data/db");
     try {
         const [rows] = await db.execute(
             "SELECT mood_label, advice, mini_task FROM moods WHERE id=? AND user_id=?",

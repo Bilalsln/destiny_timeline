@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const db = require("../data/db");
 
 function requireLoginApi(req, res, next) {
   if (req.session && req.session.user) return next();
@@ -33,7 +34,6 @@ router.post("/outfit", requireLoginApi, async (req, res) => {
 });
 
 async function getMoodHistoryById(userId, historyId) {
-  const db = require("../data/db");
   try {
     const [rows] = await db.execute(
       "SELECT mood_label, advice, mini_task FROM moods WHERE id=? AND user_id=?",
