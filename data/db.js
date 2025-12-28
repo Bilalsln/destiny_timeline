@@ -4,11 +4,13 @@ require("dotenv").config();
 let sequelize;
 
 if (process.env.DATABASE_URL) {
+
   sequelize = new Sequelize(process.env.DATABASE_URL, {
-    dialect: "mysql",      // 
+    dialect: "mysql",
     logging: false,
   });
 } else {
+ 
   sequelize = new Sequelize(
     process.env.DB_DATABASE || "destiny_timeline",
     process.env.DB_USER || "root",
@@ -22,4 +24,11 @@ if (process.env.DATABASE_URL) {
   );
 }
 
-module.exports = sequelize;
+async function execute(sql, params = []) {
+  const [rows, meta] = await sequelize.query(sql, {
+    replacements: params,
+  });
+  return [rows, meta];
+}
+
+module.exports = { sequelize, execute };
