@@ -27,7 +27,7 @@ function requireLogin(req, res, next) {
 }
 
 
-const sequelize = require("./data/db");
+const db = require("./data/db");
 
 
 require("./models/User");
@@ -35,10 +35,10 @@ require("./models/User");
 
 (async () => {
   try {
-    await sequelize.authenticate();
+    await db.sequelize.authenticate();
     console.log("✅ Database connection successful");
 
-    await sequelize.sync(); // ✅ tabloları otomatik oluşturur
+    await db.sequelize.sync(); // ✅ tabloları otomatik oluşturur
     console.log("✅ Database synced");
 
   } catch (err) {
@@ -74,7 +74,7 @@ app.use("/api", travelApiRoutes);
 
 (async () => {
   try {
-    await sequelize.query(`
+    await db.execute(`
       CREATE TABLE IF NOT EXISTS music_ai (
         id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT NOT NULL,
