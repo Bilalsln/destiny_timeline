@@ -3,7 +3,6 @@ const bcrypt = require("bcrypt");
 const router = express.Router();
 const db = require("../data/db");
 
-
 router.post("/auth/register", async (req, res) => {
   const fullName = (req.body.fullName || "").trim();
   const email = (req.body.email || "").trim().toLowerCase();
@@ -25,17 +24,16 @@ router.post("/auth/register", async (req, res) => {
     const passwordHash = await bcrypt.hash(password, 10);
 
     await db.execute(
-      "INSERT INTO users (fullName, email, passwordHash) VALUES (?,?,?)",
+      "INSERT INTO users (fullName, email, passwordHash, createdAt, updatedAt) VALUES (?,?,?,NOW(),NOW())",
       [fullName, email, passwordHash]
     );
 
     res.json({ ok: true });
   } catch (err) {
-    console.log(err);
+    console.log("REGISTER ERROR:", err);
     res.status(500).json({ error: "Sunucu hatası" });
   }
 });
-
 
 router.post("/auth/login", async (req, res) => {
   const email = (req.body.email || "").trim().toLowerCase();
@@ -61,21 +59,17 @@ router.post("/auth/login", async (req, res) => {
       return res.status(401).json({ error: "E-posta veya şifre yanlış." });
     }
 
-    
     req.session.user = { id: user.id, fullName: user.fullName, email: user.email };
-
     res.json({ ok: true, user: req.session.user });
   } catch (err) {
-    console.log(err);
+    console.log("LOGIN ERROR:", err);
     res.status(500).json({ error: "Sunucu hatası" });
   }
 });
 
-
 router.get("/auth/me", (req, res) => {
   res.json({ user: req.session.user || null });
 });
-
 
 router.post("/auth/logout", (req, res) => {
   req.session.destroy(() => {

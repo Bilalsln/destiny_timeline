@@ -26,26 +26,79 @@ function requireLogin(req, res, next) {
   return res.redirect("/login");
 }
 
-
 const db = require("./data/db");
 
-
 require("./models/User");
-
 
 (async () => {
   try {
     await db.sequelize.authenticate();
     console.log("✅ Database connection successful");
-
-    await db.sequelize.sync(); // ✅ tabloları otomatik oluşturur
+    await db.sequelize.sync();
     console.log("✅ Database synced");
 
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS diary (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        userId INT NOT NULL,
+        diaryText TEXT NOT NULL,
+        aiAdvice TEXT,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS advisor (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        userId INT NOT NULL,
+        question TEXT NOT NULL,
+        aiAnswer TEXT,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS decision (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        userId INT NOT NULL,
+        optionA TEXT NOT NULL,
+        optionB TEXT NOT NULL,
+        aiResult TEXT,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS moods (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        answers_json TEXT,
+        mood_label VARCHAR(255),
+        advice TEXT,
+        mini_task TEXT,
+        music_suggestion TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS music_ai (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        mood VARCHAR(100),
+        genre VARCHAR(100),
+        song_name TEXT,
+        reason TEXT,
+        youtube_link TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    console.log("✅ Tüm tablolar oluşturuldu");
   } catch (err) {
     console.log("❌ DB init error:", err.message);
   }
 })();
-
 
 const authApiRoutes = require("./routes/auth_api");
 app.use("/api", authApiRoutes);
@@ -70,27 +123,6 @@ app.use("/api", outfitApiRoutes);
 
 const travelApiRoutes = require("./routes/travel_api");
 app.use("/api", travelApiRoutes);
-
-
-(async () => {
-  try {
-    await db.execute(`
-      CREATE TABLE IF NOT EXISTS music_ai (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        user_id INT NOT NULL,
-        mood VARCHAR(100),
-        genre VARCHAR(100),
-        song_name TEXT,
-        reason TEXT,
-        youtube_link TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-    console.log("✅ music_ai table ensured");
-  } catch (err) {
-    console.log("❌ Tablo oluşturma hatası:", err.message);
-  }
-})();
 
 app.get("/login", (req, res) => res.render("login"));
 app.get("/register", (req, res) => res.render("register"));
