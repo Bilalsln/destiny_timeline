@@ -3,14 +3,14 @@ require("dotenv").config();
 
 let sequelize;
 
-if (process.env.DATABASE_URL && process.env.DATABASE_URL.trim() !== "") {
-  // Render / Railway (public URL)
+if (process.env.DATABASE_URL) {
+  // Render / Production (URL ile)
   sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect: "mysql",
-    logging: false
+    logging: false,
   });
 } else {
-  // Local MySQL (DB_* variables)
+  // Local (DB_... ile)
   sequelize = new Sequelize(
     process.env.DB_DATABASE || "destiny_timeline",
     process.env.DB_USER || "root",
@@ -19,7 +19,7 @@ if (process.env.DATABASE_URL && process.env.DATABASE_URL.trim() !== "") {
       host: process.env.DB_HOST || "localhost",
       port: Number(process.env.DB_PORT) || 3306,
       dialect: "mysql",
-      logging: false
+      logging: false,
     }
   );
 }
@@ -36,7 +36,9 @@ async function conn() {
 conn();
 
 async function execute(sql, params = []) {
-  const [rows, meta] = await sequelize.query(sql, { replacements: params });
+  const [rows, meta] = await sequelize.query(sql, {
+    replacements: params,
+  });
   return [rows, meta];
 }
 
