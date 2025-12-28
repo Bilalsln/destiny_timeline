@@ -4,19 +4,21 @@ require("dotenv").config();
 const sequelize = new Sequelize(
   process.env.DB_DATABASE || "destiny_timeline",
   process.env.DB_USER || "root",
-  process.env.DB_PASSWORD || "Bsulun1313",
+  process.env.DB_PASSWORD || "",
   {
     host: process.env.DB_HOST || "localhost",
-    dialect: "mysql"
+    port: Number(process.env.DB_PORT) || 3306,
+    dialect: "mysql",
+    logging: false
   }
 );
 
 async function conn() {
   try {
     await sequelize.authenticate();
-    console.log("Connection has been established successfully.");
+    console.log("Database connection successful");
   } catch (error) {
-    console.error("Unable to connect to the database:", error);
+    console.error("Database connection failed:", error.message);
   }
 }
 
