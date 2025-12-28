@@ -29,14 +29,14 @@ function requireLogin(req, res, next) {
 const authApiRoutes = require("./routes/auth_api");
 app.use("/api", authApiRoutes);
 
-const diaryAiApiRoutes = require("./routes/diary_ai_api");
-app.use("/api", diaryAiApiRoutes);
+const diaryApiRoutes = require("./routes/diary_api");
+app.use("/api", diaryApiRoutes);
 
-const advisorAiApiRoutes = require("./routes/advisor_ai_api");
-app.use("/api", advisorAiApiRoutes);
+const advisorApiRoutes = require("./routes/advisor_api");
+app.use("/api", advisorApiRoutes);
 
-const decisionAiApiRoutes = require("./routes/decision_ai_api");
-app.use("/api", decisionAiApiRoutes);
+const decisionApiRoutes = require("./routes/decision_api");
+app.use("/api", decisionApiRoutes);
 
 const moodApiRoutes = require("./routes/mood_api");
 app.use("/api", moodApiRoutes);
@@ -44,11 +44,17 @@ app.use("/api", moodApiRoutes);
 const musicAiApiRoutes = require("./routes/music_ai_api");
 app.use("/api", musicAiApiRoutes);
 
+const outfitApiRoutes = require("./routes/outfit_api");
+app.use("/api", outfitApiRoutes);
+
+const travelApiRoutes = require("./routes/travel_api");
+app.use("/api", travelApiRoutes);
+
 const db = require("./data/db");
 (async () => {
   try {
     await db.execute(`
-      CREATE TABLE IF NOT EXISTS music_history (
+      CREATE TABLE IF NOT EXISTS music_ai (
         id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT NOT NULL,
         mood VARCHAR(100),
@@ -76,32 +82,32 @@ app.get("/", requireLogin, (req, res) => {
   res.render("index");
 });
 
-app.get("/diary", requireLogin, (req, res) => {
+app.get("/advisor", requireLogin, (req, res) => {
   res.render("advisor");
 });
 
-app.get("/ai", requireLogin, (req, res) => {
+app.get("/decision", requireLogin, (req, res) => {
   res.render("decision");
 });
 
-app.get("/diary-ai", requireLogin, (req, res) => {
-  res.render("diary_ai");
-});
-
-app.get("/tools", requireLogin, (req, res) => {
-  res.render("tools");
+app.get("/diary", requireLogin, (req, res) => {
+  res.render("diary");
 });
 
 app.get("/tools/mood", requireLogin, (req, res) => {
   res.render("tools_mood");
 });
 
-app.get("/tools/budget-travel", requireLogin, (req, res) => {
+app.get("/tools/travel", requireLogin, (req, res) => {
   res.render("tools_travel");
 });
 
 app.get("/tools/music", requireLogin, (req, res) => {
   res.render("tools_music");
+});
+
+app.get("/tools/outfit", requireLogin, (req, res) => {
+  res.render("tools_outfit");
 });
 
 app.use((req, res) => {

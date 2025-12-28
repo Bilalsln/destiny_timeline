@@ -69,23 +69,7 @@ ${QUESTIONS.map((q, i) => `S${i + 1}: ${q}\nC${i + 1}: ${answers[i]}`).join("\n\
           },
           { role: "user", content: inputText }
         ],
-        response_format: {
-          type: "json_schema",
-          json_schema: {
-            name: "mood_result",
-            schema: {
-              type: "object",
-              additionalProperties: false,
-              properties: {
-                mood_score: { type: "number" },
-                mood_label: { type: "string" },
-                message: { type: "string" },
-                mini_task: { type: "string" }
-              },
-              required: ["mood_score", "mood_label", "message", "mini_task"]
-            }
-          }
-        }
+        temperature: 0.7
       })
     });
 
@@ -113,7 +97,7 @@ ${QUESTIONS.map((q, i) => `S${i + 1}: ${q}\nC${i + 1}: ${answers[i]}`).join("\n\
     const miniTask = result.mini_task || "";
 
     await db.execute(
-      `INSERT INTO mood_history (user_id, answers_json, mood_label, advice, mini_task, music_suggestion)
+      `INSERT INTO moods (user_id, answers_json, mood_label, advice, mini_task, music_suggestion)
        VALUES (?, ?, ?, ?, ?, ?)`,
       [
         userId,
@@ -136,7 +120,7 @@ router.get("/mood/history", requireLoginApi, async (req, res) => {
   try {
     const userId = req.session.user.id;
     const [rows] = await db.execute(
-      "SELECT id, mood_label, advice, mini_task, created_at FROM mood_history WHERE user_id=? ORDER BY id DESC",
+      "SELECT id, mood_label, advice, mini_task, created_at FROM moods WHERE user_id=? ORDER BY id DESC",
       [userId]
     );
     res.json({ rows });
@@ -151,7 +135,7 @@ router.delete("/mood/history/:id", requireLoginApi, async (req, res) => {
     const userId = req.session.user.id;
     const id = Number(req.params.id);
 
-    await db.execute("DELETE FROM mood_history WHERE id=? AND user_id=?", [id, userId]);
+    await db.execute("DELETE FROM moods WHERE id=? AND user_id=?", [id, userId]);
     res.json({ ok: true });
   } catch (err) {
     console.log(err);

@@ -1,4 +1,4 @@
-<%- include("partials/head", { title: "AI DJ - Destiny Timeline" }) %>
+<%- include("partials/head", { title: "Müzik Önerisi - Destiny Timeline" }) %>
 <%- include("partials/nav") %>
 
 <main class="container py-5">
@@ -45,6 +45,11 @@
                 <option value="">Seçiniz...</option>
               </select>
             </div>
+          </div>
+
+          <div class="mt-3">
+            <label class="form-label text-muted2">Ekstra Detaylar (Opsiyonel)</label>
+            <textarea id="extraDetails" class="form-control bg-dark text-light border-secondary" rows="3" placeholder="Örn: Spor yaparken dinlemek istiyorum, Ders çalışırken odaklanmak için, Partide çalmak için..."></textarea>
           </div>
 
           <button id="suggestBtn" class="btn btn-outline-light w-100 mt-4">

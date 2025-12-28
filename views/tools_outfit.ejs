@@ -1,0 +1,86 @@
+<%- include("partials/head", { title: "Kıyafet Önerisi - Destiny Timeline" }) %>
+<style>
+  body { overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+</style>
+<%- include("partials/nav") %>
+
+<div style="flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0;">
+<main class="container py-3" style="flex: 1; min-height: 0; overflow-y: auto;">
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <div class="card card-app">
+        <div class="card-body">
+          <div class="card-tag">STİL</div>
+          <h1 class="h4 mt-3">Kıyafet Önerisi</h1>
+          <p class="text-muted2">
+            Ruh halin ve hava durumuna göre kıyafet önerisi al.
+          </p>
+
+          <div class="row g-3 mt-3">
+            <div class="col-md-3">
+              <label class="form-label text-muted2" style="height: 40px; display: flex; align-items: flex-start; padding-top: 6px;">Cinsiyet</label>
+              <select id="genderSelect" class="form-select bg-dark text-light border-secondary">
+                <option value="">Seçiniz...</option>
+                <option value="Kadın">Kadın</option>
+                <option value="Erkek">Erkek</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label text-muted2" style="height: 40px; display: flex; align-items: flex-start; padding-top: 6px;">Mood</label>
+              <select id="moodSelect" class="form-select bg-dark text-light border-secondary">
+                <option value="">Seçiniz...</option>
+                <option value="Sakin">Sakin</option>
+                <option value="Enerjik">Enerjik</option>
+                <option value="Rahat">Rahat</option>
+                <option value="Odaklanmış">Odaklanmış</option>
+                <option value="Mutlu">Mutlu</option>
+                <option value="Yorgun">Yorgun</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label text-muted2" style="height: 40px; display: flex; align-items: flex-start; padding-top: 6px;">Hava Durumu</label>
+              <select id="weatherSelect" class="form-select bg-dark text-light border-secondary">
+                <option value="">Seçiniz...</option>
+                <option value="Soğuk">Soğuk</option>
+                <option value="Sıcak">Sıcak</option>
+                <option value="Yağmurlu">Yağmurlu</option>
+                <option value="Ilık">Ilık</option>
+                <option value="Karlı">Karlı</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label text-muted2" style="height: 40px; display: flex; align-items: flex-start; padding-top: 6px;">Ruh Hali Geçmişi (Opsiyonel)</label>
+              <select id="moodHistorySelect" class="form-select bg-dark text-light border-secondary">
+                <option value="">Seçiniz...</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mt-3">
+            <label class="form-label text-muted2">Nereye gidiyorsun? Ne yapacaksın? (Opsiyonel)</label>
+            <textarea id="activityInput" class="form-control" rows="3" placeholder="Örn: Sinemaya gidiyorum, Arkadaşımla kahve içeceğim, İş görüşmesine gidiyorum..."></textarea>
+          </div>
+
+          <button id="suggestBtn" class="btn btn-outline-light w-100 mt-4">
+            👔 Kıyafet Öner
+          </button>
+
+          <div id="resultArea" class="mt-4 d-none">
+            <div class="p-4 border border-secondary rounded bg-dark">
+              <h5 class="text-white mb-3">Önerilen Kıyafet</h5>
+              <p class="h6 text-light mb-2" id="outfitResult"></p>
+              <p class="text-muted2 mb-2" id="outfitReason"></p>
+              <div id="outfitImageContainer" class="mt-3 d-none">
+                <img id="outfitImage" src="" alt="Kıyafet örneği" class="img-fluid rounded w-100" style="max-height: 600px; object-fit: contain; background: rgba(0,0,0,0.3);">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="/static/js/tools_outfit.js"></script>
+<%- include("partials/footer") %>
+</div>

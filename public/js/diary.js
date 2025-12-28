@@ -38,7 +38,7 @@ function renderDiaryItems(items) {
 async function loadHistory() {
   historyEl.textContent = "Yükleniyor...";
 
-  const res = await fetch("/api/diary-ai");
+  const res = await fetch("/api/diary");
   if (!res.ok) {
     historyEl.textContent = "Kayıtlar alınamadı.";
     return;
@@ -95,7 +95,7 @@ form.addEventListener("submit", async (e) => {
 
   aiBox.textContent = "Yapay Zeka önerisi oluşturuluyor...";
 
-  const res = await fetch("/api/diary-ai", {
+  const res = await fetch("/api/diary", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ diaryText })
@@ -116,7 +116,7 @@ form.addEventListener("submit", async (e) => {
 async function deleteItem(id) {
   if (!confirm("Bu kaydı silmek istiyor musun?")) return;
 
-  const res = await fetch(`/api/diary-ai/${id}`, {
+  const res = await fetch(`/api/diary/${id}`, {
     method: "DELETE"
   });
 

@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const moodSelect = document.getElementById("moodSelect");
   const genreSelect = document.getElementById("genreSelect");
   const moodHistorySelect = document.getElementById("moodHistorySelect");
+  const extraDetails = document.getElementById("extraDetails");
   const resultArea = document.getElementById("resultArea");
   const suggestionTitle = document.getElementById("suggestionTitle");
   const suggestionReason = document.getElementById("suggestionReason");
@@ -33,6 +34,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const mood = moodSelect.value.trim();
     const genre = genreSelect.value.trim();
     const moodHistoryId = moodHistorySelect.value.trim();
+    const extraDetailsValue = extraDetails.value.trim();
 
     if (!mood || !genre) {
       alert("Lütfen ruh hali ve müzik türü seçin.");
@@ -46,7 +48,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const res = await fetch("/api/music-ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mood, genre, moodHistoryId })
+        body: JSON.stringify({ mood, genre, moodHistoryId, extraDetails: extraDetailsValue })
       });
 
       const data = await res.json();
@@ -58,11 +60,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const suggestion = data.suggestion || "";
       const youtubeLink = data.youtubeLink || "";
-      const lines = suggestion.split("\n").filter(l => l.trim());
+      const lines = suggestion.split("\n");
+      const cleanLines = [];
+      for (let i = 0; i < lines.length; i++) {
+        if (lines[i].trim()) {
+          cleanLines.push(lines[i].trim());
+        }
+      }
       
-      if (lines.length > 0) {
-        suggestionTitle.textContent = lines[0];
-        suggestionReason.textContent = lines.slice(1).join(" ") || "";
+      if (cleanLines.length > 0) {
+        suggestionTitle.textContent = cleanLines[0];
+        suggestionReason.textContent = cleanLines.slice(1).join(" ") || "";
       } else {
         suggestionTitle.textContent = suggestion;
         suggestionReason.textContent = "";

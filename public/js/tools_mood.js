@@ -46,7 +46,6 @@ async function analyzeAndSave() {
 
   if (!res.ok) {
     alert(data.error || "Hata oluştu");
-    console.log(data);
     return;
   }
 

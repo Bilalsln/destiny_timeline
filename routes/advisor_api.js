@@ -7,12 +7,12 @@ function requireLoginApi(req, res, next) {
   return res.status(401).json({ error: "Login gerekli" });
 }
 
-router.get("/decision", requireLoginApi, async (req, res) => {
+router.get("/advisor", requireLoginApi, async (req, res) => {
   try {
     const userId = req.session.user.id;
 
     const [rows] = await db.execute(
-      "SELECT id, optionA, optionB, aiResult, createdAt FROM decision_ai WHERE userId=? ORDER BY id DESC LIMIT 20",
+      "SELECT id, question, aiAnswer, createdAt FROM advisor WHERE userId=? ORDER BY id DESC LIMIT 20",
       [userId]
     );
 
@@ -23,32 +23,30 @@ router.get("/decision", requireLoginApi, async (req, res) => {
   }
 });
 
-router.post("/decision", requireLoginApi, async (req, res) => {
-  const optionA = (req.body.optionA || "").trim();
-  const optionB = (req.body.optionB || "").trim();
-
-  if (optionA.length < 2 || optionB.length < 2) {
-    return res.status(400).json({ error: "Seçenekler çok kısa." });
+router.post("/advisor", requireLoginApi, async (req, res) => {
+  const question = (req.body.question || "").trim();
+  if (question.length < 5) {
+    return res.status(400).json({ error: "Soru çok kısa." });
   }
 
   try {
     const userId = req.session.user.id;
 
-    const aiResult = await getDecisionAdvice(optionA, optionB);
+    const aiAnswer = await getAdvisorAnswer(question);
 
     await db.execute(
-      "INSERT INTO decision_ai (userId, optionA, optionB, aiResult) VALUES (?,?,?,?)",
-      [userId, optionA, optionB, aiResult]
+      "INSERT INTO advisor (userId, question, aiAnswer) VALUES (?,?,?)",
+      [userId, question, aiAnswer]
     );
 
-    res.json({ ok: true, aiResult });
+    res.json({ ok: true, aiAnswer });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "AI/Sunucu hatası" });
   }
 });
 
-router.delete("/decision/:id", requireLoginApi, async (req, res) => {
+router.delete("/advisor/:id", requireLoginApi, async (req, res) => {
   const id = parseInt(req.params.id, 10);
   const userId = req.session.user.id;
 
@@ -56,7 +54,7 @@ router.delete("/decision/:id", requireLoginApi, async (req, res) => {
 
   try {
     const [result] = await db.execute(
-      "DELETE FROM decision_ai WHERE id=? AND userId=?",
+      "DELETE FROM advisor WHERE id=? AND userId=?",
       [id, userId]
     );
 
@@ -71,7 +69,7 @@ router.delete("/decision/:id", requireLoginApi, async (req, res) => {
   }
 });
 
-async function getDecisionAdvice(optionA, optionB) {
+async function getAdvisorAnswer(question) {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) return "OPENAI_API_KEY bulunamadı (.env kontrol et).";
 
@@ -87,12 +85,9 @@ async function getDecisionAdvice(optionA, optionB) {
         {
           role: "system",
           content:
-            "Sen karar yardımcısısın. İki seçenek verildiğinde Türkçe, kısa ve net şekilde karşılaştır. 3 madde artı/eksi, sonunda tek cümle öneri ver. 140 kelimeyi geçme.",
+            "Sen 'kişisel danışman'sın. Kullanıcının sorusuna Türkçe, kısa, net ve yargılamadan cevap ver. 3 maddelik öneri yap. 120 kelimeyi geçme.",
         },
-        {
-          role: "user",
-          content: `Seçenek A: ${optionA}\nSeçenek B: ${optionB}\nHangisini seçmeliyim?`,
-        },
+        { role: "user", content: question },
       ],
       temperature: 0.7,
     }),
@@ -104,7 +99,10 @@ async function getDecisionAdvice(optionA, optionB) {
   }
 
   const data = await resp.json();
-  return data?.choices?.[0]?.message?.content?.trim() || "AI cevap üretmedi.";
+  if (data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
+    return data.choices[0].message.content.trim();
+  }
+  return "AI cevap üretmedi.";
 }
 
 module.exports = router;

@@ -1,8 +1,12 @@
 <%- include("partials/head", { title: "Giriş Yap - Destiny Timeline" }) %>
+<style>
+  body { overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+</style>
 <%- include("partials/nav", { hideMenu: true }) %>
 
-<main class="container py-5">
-  <div class="row justify-content-center">
+<div style="flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0;">
+<main class="container py-3" style="flex: 1; display: flex; align-items: center; min-height: 0;">
+  <div class="row justify-content-center w-100">
     <div class="col-md-6 col-lg-5">
       <div class="card card-app">
         <div class="card-body p-4">
@@ -36,4 +40,5 @@
 
 <script src="/static/js/login.js"></script>
 <%- include("partials/footer") %>
+</div>
 

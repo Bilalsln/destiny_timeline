@@ -11,6 +11,7 @@ router.post("/music-ai", requireLoginApi, async (req, res) => {
     const mood = (req.body.mood || "").trim();
     const genre = (req.body.genre || "").trim();
     const moodHistoryId = req.body.moodHistoryId || "";
+    const extraDetails = (req.body.extraDetails || "").trim();
 
     if (!mood || !genre) {
         return res.status(400).json({ error: "Lütfen ruh hali ve tür seçin." });
@@ -22,24 +23,18 @@ router.post("/music-ai", requireLoginApi, async (req, res) => {
             moodHistoryData = await getMoodHistoryById(req.session.user.id, moodHistoryId);
         }
 
-        const suggestion = await getMusicSuggestion(mood, genre, moodHistoryData);
+        const suggestion = await getMusicSuggestion(mood, genre, moodHistoryData, extraDetails);
         
         const lines = suggestion.split("\n");
-        const songLine = lines[0] || "";
         const songName = lines[0] || "";
         const reason = lines.slice(1).join(" ").trim() || "";
         
-        const videoId = await findYouTubeVideoSimple(songLine);
-        let youtubeLink = "";
-        
-        if (videoId) {
-            youtubeLink = `https://www.youtube.com/watch?v=${videoId}`;
-        }
+        const youtubeLink = await findYouTubeVideoSimple(songName);
 
         const userId = req.session.user.id;
 
         await db.execute(
-            "INSERT INTO music_history (user_id, mood, genre, song_name, reason, youtube_link) VALUES (?, ?, ?, ?, ?, ?)",
+            "INSERT INTO music_ai (user_id, mood, genre, song_name, reason, youtube_link) VALUES (?, ?, ?, ?, ?, ?)",
             [userId, mood, genre, songName, reason, youtubeLink]
         );
 
@@ -54,7 +49,7 @@ async function getMoodHistoryById(userId, historyId) {
     const db = require("../data/db");
     try {
         const [rows] = await db.execute(
-            "SELECT mood_label, advice, mini_task FROM mood_history WHERE id=? AND user_id=?",
+            "SELECT mood_label, advice, mini_task FROM moods WHERE id=? AND user_id=?",
             [historyId, userId]
         );
         if (rows.length > 0) {
@@ -66,11 +61,15 @@ async function getMoodHistoryById(userId, historyId) {
     return null;
 }
 
-async function getMusicSuggestion(mood, genre, moodHistoryData) {
+async function getMusicSuggestion(mood, genre, moodHistoryData, extraDetails) {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) return "API Key eksik.";
 
     let userMessage = `Ruh Hali: ${mood}\nTür: ${genre}\n`;
+    
+    if (extraDetails) {
+        userMessage += `Ekstra Detaylar: ${extraDetails}\n`;
+    }
     
     if (moodHistoryData) {
         userMessage += `\nKullanıcının geçmiş ruh hali analizi:\n`;
@@ -110,7 +109,10 @@ async function getMusicSuggestion(mood, genre, moodHistoryData) {
     }
 
     const data = await resp.json();
-    return data?.choices?.[0]?.message?.content?.trim() || "Öneri bulunamadı.";
+    if (data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
+        return data.choices[0].message.content.trim();
+    }
+    return "Öneri bulunamadı.";
 }
 
 async function findYouTubeVideoSimple(searchQuery) {
@@ -121,12 +123,7 @@ async function findYouTubeVideoSimple(searchQuery) {
         
         const videoIdMatch = html.match(/"videoId":"([^"]+)"/);
         if (videoIdMatch && videoIdMatch[1]) {
-            return videoIdMatch[1];
-        }
-        
-        const watchMatch = html.match(/\/watch\?v=([a-zA-Z0-9_-]{11})/);
-        if (watchMatch && watchMatch[1]) {
-            return watchMatch[1];
+            return `https://www.youtube.com/watch?v=${videoIdMatch[1]}`;
         }
     } catch (err) {
         console.log("YouTube video bulma hatası:", err);
@@ -139,7 +136,7 @@ router.get("/music/history", requireLoginApi, async (req, res) => {
     try {
         const userId = req.session.user.id;
         const [rows] = await db.execute(
-            "SELECT id, mood, genre, song_name, reason, youtube_link, created_at FROM music_history WHERE user_id=? ORDER BY id DESC",
+            "SELECT id, mood, genre, song_name, reason, youtube_link, created_at FROM music_ai WHERE user_id=? ORDER BY id DESC",
             [userId]
         );
         res.json({ rows });
@@ -153,7 +150,7 @@ router.delete("/music/history/:id", requireLoginApi, async (req, res) => {
     try {
         const userId = req.session.user.id;
         const id = Number(req.params.id);
-        await db.execute("DELETE FROM music_history WHERE id=? AND user_id=?", [id, userId]);
+        await db.execute("DELETE FROM music_ai WHERE id=? AND user_id=?", [id, userId]);
         res.json({ ok: true });
     } catch (err) {
         console.log(err);

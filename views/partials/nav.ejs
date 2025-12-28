@@ -12,15 +12,15 @@
       <ul class="navbar-nav ms-auto gap-lg-2 align-items-lg-center">
         <% if (typeof hideMenu === 'undefined' || !hideMenu) { %>
         <li class="nav-item">
-          <a class="nav-link nav-link-app" href="/diary">Danışman</a>
+          <a class="nav-link nav-link-app" href="/advisor">Danışman</a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link nav-link-app" href="/diary-ai">Günlük</a>
+          <a class="nav-link nav-link-app" href="/diary">Günlük</a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link nav-link-app" href="/ai">Karar Yardımcısı</a>
+          <a class="nav-link nav-link-app" href="/decision">Karar Yardımcısı</a>
         </li>
 
         <li class="nav-item dropdown ms-lg-2 position-relative">
@@ -37,7 +37,7 @@
             <div class="tools-panel-header">
             </div>
 
-            <a class="dropdown-item tools-item" href="/tools/budget-travel">
+            <a class="dropdown-item tools-item" href="/tools/travel">
               <span class="tools-item-title">Keyfine Göre Tatil</span>
               <span class="tools-item-desc">Bütçe gir → rota öner</span>
             </a>
@@ -50,6 +50,11 @@
             <a class="dropdown-item tools-item" href="/tools/music">
               <span class="tools-item-title">AI DJ: Müzik Önerisi</span>
               <span class="tools-item-desc">Ruh hali + tür → şarkı öner</span>
+            </a>
+
+            <a class="dropdown-item tools-item" href="/tools/outfit">
+              <span class="tools-item-title">Kıyafet Önerisi</span>
+              <span class="tools-item-desc">Ruh hali + hava → kıyafet öner</span>
             </a>
 
           </div>

@@ -7,12 +7,12 @@ function requireLoginApi(req, res, next) {
   return res.status(401).json({ error: "Login gerekli" });
 }
 
-router.get("/diary-ai", requireLoginApi, async (req, res) => {
+router.get("/diary", requireLoginApi, async (req, res) => {
   try {
     const userId = req.session.user.id;
 
     const [rows] = await db.execute(
-      "SELECT id, diaryText, aiAdvice, createdAt FROM diary_ai WHERE userId=? ORDER BY id DESC LIMIT 20",
+      "SELECT id, diaryText, aiAdvice, createdAt FROM diary WHERE userId=? ORDER BY id DESC LIMIT 20",
       [userId]
     );
 
@@ -23,7 +23,7 @@ router.get("/diary-ai", requireLoginApi, async (req, res) => {
   }
 });
 
-router.post("/diary-ai", requireLoginApi, async (req, res) => {
+router.post("/diary", requireLoginApi, async (req, res) => {
   const diaryText = (req.body.diaryText || "").trim();
   if (diaryText.length < 10) {
     return res.status(400).json({ error: "Günlük çok kısa." });
@@ -35,7 +35,7 @@ router.post("/diary-ai", requireLoginApi, async (req, res) => {
     const aiAdvice = await getAdviceFromOpenAI(diaryText);
 
     await db.execute(
-      "INSERT INTO diary_ai (userId, diaryText, aiAdvice) VALUES (?,?,?)",
+      "INSERT INTO diary (userId, diaryText, aiAdvice) VALUES (?,?,?)",
       [userId, diaryText, aiAdvice]
     );
 
@@ -46,7 +46,7 @@ router.post("/diary-ai", requireLoginApi, async (req, res) => {
   }
 });
 
-router.delete("/diary-ai/:id", requireLoginApi, async (req, res) => {
+router.delete("/diary/:id", requireLoginApi, async (req, res) => {
   const id = parseInt(req.params.id, 10);
   const userId = req.session.user.id;
 
@@ -56,7 +56,7 @@ router.delete("/diary-ai/:id", requireLoginApi, async (req, res) => {
 
   try {
     const [result] = await db.execute(
-      "DELETE FROM diary_ai WHERE id=? AND userId=?",
+      "DELETE FROM diary WHERE id=? AND userId=?",
       [id, userId]
     );
 
@@ -103,8 +103,10 @@ async function getAdviceFromOpenAI(diaryText) {
   }
 
   const data = await resp.json();
-  const text = data?.choices?.[0]?.message?.content?.trim();
-  return text || "AI cevap üretmedi.";
+  if (data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
+    return data.choices[0].message.content.trim();
+  }
+  return "AI cevap üretmedi.";
 }
 
 module.exports = router;
